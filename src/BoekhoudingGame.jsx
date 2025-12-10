@@ -21,7 +21,8 @@ const bedrijven = [
       kas: 500,
       eigenVermogen: 10000,
       lening: 5000,
-      crediteuren: 0
+      crediteuren: 0,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -158,7 +159,8 @@ const bedrijven = [
       kas: 2000,
       eigenVermogen: 40000,
       lening: 20000,
-      crediteuren: 2000
+      crediteuren: 2000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -295,7 +297,8 @@ const bedrijven = [
       kas: 500,
       eigenVermogen: 18000,
       lening: 6000,
-      crediteuren: 1000
+      crediteuren: 1000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -303,14 +306,14 @@ const bedrijven = [
         getOmschrijving: (b) => `Een bedrijf boekt catering voor hun nieuwjaarsborrel. Ze betalen €${b.vooruitbetaling.toLocaleString()} vooruit (50%).`,
         getDetail: () => "De rest volgt na het event.",
         bedragen: { vooruitbetaling: 1500 },
-        correctePosten: ["bank", "crediteuren"],
-        getMutaties: (b) => ({ bank: b.vooruitbetaling, crediteuren: b.vooruitbetaling }),
+        correctePosten: ["bank", "vooruitontvangen"],
+        getMutaties: (b) => ({ bank: b.vooruitbetaling, vooruitontvangen: b.vooruitbetaling }),
         resultaat: {},
         liquiditeit: (b) => ({ ontvangsten: b.vooruitbetaling }),
         hints: [
           "Het geld is binnen, maar het event is nog niet geweest. Is dit al opbrengst?",
-          "Bank stijgt, maar je hebt een verplichting (vooruitontvangen).",
-          "Bank +bedrag, Crediteuren +bedrag"
+          "Bank stijgt, maar je hebt een verplichting (vooruitontvangen bedragen).",
+          "Bank +bedrag, Vooruitontvangen +bedrag"
         ],
         kernprincipe: "Vooruitbetaling is ONTVANGST maar nog geen OPBRENGST — je moet nog leveren!"
       },
@@ -322,13 +325,13 @@ const bedrijven = [
         linkedBedragen: {
           vooruit: { type: 'transaction', txIndex: 0, key: 'vooruitbetaling' }
         },
-        correctePosten: ["debiteuren", "voorraad", "eigenVermogen", "crediteuren"],
-        getMutaties: (b) => ({ debiteuren: b.totaal - b.vooruit, voorraad: -b.kostprijs, eigenVermogen: b.totaal - b.kostprijs, crediteuren: -b.vooruit }),
+        correctePosten: ["debiteuren", "voorraad", "eigenVermogen", "vooruitontvangen"],
+        getMutaties: (b) => ({ debiteuren: b.totaal - b.vooruit, voorraad: -b.kostprijs, eigenVermogen: b.totaal - b.kostprijs, vooruitontvangen: -b.vooruit }),
         resultaat: (b) => ({ opbrengsten: b.totaal, kostprijs: b.kostprijs }),
         liquiditeit: {},
         hints: [
           "Nu is de prestatie geleverd. De vooruitbetaling wordt opbrengst, de rest wordt debiteur.",
-          "Debiteuren +restant, Voorraad -kostprijs, EV +winst, Crediteuren -vooruitbetaling.",
+          "Debiteuren +restant, Voorraad -kostprijs, EV +winst, Vooruitontvangen -vooruitbetaling.",
           "Vier posten muteren bij deze complexe transactie!"
         ],
         kernprincipe: "Bij levering wordt vooruitbetaling omgezet in opbrengst!"
@@ -435,7 +438,8 @@ const bedrijven = [
       kas: 500,
       eigenVermogen: 15000,
       lening: 4000,
-      crediteuren: 1000
+      crediteuren: 1000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -569,7 +573,8 @@ const bedrijven = [
       kas: 0,
       eigenVermogen: 30000,
       lening: 10000,
-      crediteuren: 3000
+      crediteuren: 3000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -703,7 +708,8 @@ const bedrijven = [
       kas: 1000,
       eigenVermogen: 40000,
       lening: 15000,
-      crediteuren: 1000
+      crediteuren: 1000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -834,7 +840,8 @@ const bedrijven = [
       kas: 500,
       eigenVermogen: 35000,
       lening: 3000,
-      crediteuren: 500
+      crediteuren: 500,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -890,14 +897,14 @@ const bedrijven = [
         getOmschrijving: (b) => `Een nieuwe klant betaalt €${b.voorschot.toLocaleString()} voorschot.`,
         getDetail: () => "Project start volgende maand.",
         bedragen: { voorschot: 3000 },
-        correctePosten: ["bank", "crediteuren"],
-        getMutaties: (b) => ({ bank: b.voorschot, crediteuren: b.voorschot }),
+        correctePosten: ["bank", "vooruitontvangen"],
+        getMutaties: (b) => ({ bank: b.voorschot, vooruitontvangen: b.voorschot }),
         resultaat: {},
         liquiditeit: (b) => ({ ontvangsten: b.voorschot }),
         hints: [
           "Geld ontvangen voor werk dat nog moet gebeuren.",
-          "Bank stijgt, verplichting (crediteur) stijgt.",
-          "Bank +bedrag, Crediteuren +bedrag"
+          "Bank stijgt, verplichting (vooruitontvangen bedragen) stijgt.",
+          "Bank +bedrag, Vooruitontvangen +bedrag"
         ],
         kernprincipe: "Voorschot: ONTVANGST maar nog geen OPBRENGST!"
       },
@@ -965,7 +972,8 @@ const bedrijven = [
       kas: 0,
       eigenVermogen: 50000,
       lening: 8000,
-      crediteuren: 0
+      crediteuren: 0,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -1096,7 +1104,8 @@ const bedrijven = [
       kas: 1000,
       eigenVermogen: 80000,
       lening: 75000,
-      crediteuren: 1000
+      crediteuren: 1000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -1230,7 +1239,8 @@ const bedrijven = [
       kas: 0,
       eigenVermogen: 60000,
       lening: 15000,
-      crediteuren: 3000
+      crediteuren: 3000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -1364,7 +1374,8 @@ const bedrijven = [
       kas: 2000,
       eigenVermogen: 35000,
       lening: 10000,
-      crediteuren: 2000
+      crediteuren: 2000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -1372,14 +1383,14 @@ const bedrijven = [
         getOmschrijving: (b) => `Een bedrijf boekt een kick-off event. Vooruitbetaling: €${b.vooruit.toLocaleString()} (40%).`,
         getDetail: () => "Event is eind januari.",
         bedragen: { vooruit: 6000 },
-        correctePosten: ["bank", "crediteuren"],
-        getMutaties: (b) => ({ bank: b.vooruit, crediteuren: b.vooruit }),
+        correctePosten: ["bank", "vooruitontvangen"],
+        getMutaties: (b) => ({ bank: b.vooruit, vooruitontvangen: b.vooruit }),
         resultaat: {},
         liquiditeit: (b) => ({ ontvangsten: b.vooruit }),
         hints: [
           "Geld ontvangen, event nog niet geleverd.",
-          "Bank stijgt, verplichting stijgt.",
-          "Bank +bedrag, Crediteuren +bedrag"
+          "Bank stijgt, verplichting (vooruitontvangen bedragen) stijgt.",
+          "Bank +bedrag, Vooruitontvangen +bedrag"
         ],
         kernprincipe: "Vooruitbetaling: ONTVANGST maar geen OPBRENGST!"
       },
@@ -1426,13 +1437,13 @@ const bedrijven = [
         linkedBedragen: {
           vooruit: { type: 'transaction', txIndex: 0, key: 'vooruit' }
         },
-        correctePosten: ["debiteuren", "voorraad", "eigenVermogen", "crediteuren"],
-        getMutaties: (b) => ({ debiteuren: b.totaal - b.vooruit, voorraad: -b.materiaal, eigenVermogen: b.totaal - b.materiaal, crediteuren: -b.vooruit }),
+        correctePosten: ["debiteuren", "voorraad", "eigenVermogen", "vooruitontvangen"],
+        getMutaties: (b) => ({ debiteuren: b.totaal - b.vooruit, voorraad: -b.materiaal, eigenVermogen: b.totaal - b.materiaal, vooruitontvangen: -b.vooruit }),
         resultaat: (b) => ({ opbrengsten: b.totaal, kostprijs: b.materiaal }),
         liquiditeit: {},
         hints: [
           "Event geleverd: vooruitbetaling wordt opbrengst, rest wordt debiteur.",
-          "Debiteuren +rest, Voorraad -materiaal, EV +winst, Crediteuren -vooruit.",
+          "Debiteuren +rest, Voorraad -materiaal, EV +winst, Vooruitontvangen -vooruit.",
           "Vier posten muteren!"
         ],
         kernprincipe: "Bij levering wordt vooruitbetaling omgezet in opbrengst!"
@@ -1504,7 +1515,8 @@ const bedrijven = [
       kas: 1500,
       eigenVermogen: 25000,
       lening: 8000,
-      crediteuren: 2000
+      crediteuren: 2000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -1638,7 +1650,8 @@ const bedrijven = [
       kas: 0,
       eigenVermogen: 120000,
       lening: 60000,
-      crediteuren: 5000
+      crediteuren: 5000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -1775,7 +1788,8 @@ const bedrijven = [
       kas: 3000,
       eigenVermogen: 350000,
       lening: 150000,
-      crediteuren: 1000
+      crediteuren: 1000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -1799,14 +1813,14 @@ const bedrijven = [
         getOmschrijving: (b) => `Een bedrijf boekt 10 kamers voor een conferentie. Aanbetaling: €${b.vooruit.toLocaleString()} (50%).`,
         getDetail: () => "Verblijf is eind januari.",
         bedragen: { vooruit: 4500 },
-        correctePosten: ["bank", "crediteuren"],
-        getMutaties: (b) => ({ bank: b.vooruit, crediteuren: b.vooruit }),
+        correctePosten: ["bank", "vooruitontvangen"],
+        getMutaties: (b) => ({ bank: b.vooruit, vooruitontvangen: b.vooruit }),
         resultaat: {},
         liquiditeit: (b) => ({ ontvangsten: b.vooruit }),
         hints: [
           "Geld ontvangen, maar de kamers zijn nog niet gebruikt.",
-          "Bank stijgt, verplichting (vooruitontvangen) stijgt.",
-          "Bank +bedrag, Crediteuren +bedrag"
+          "Bank stijgt, verplichting (vooruitontvangen bedragen) stijgt.",
+          "Bank +bedrag, Vooruitontvangen +bedrag"
         ],
         kernprincipe: "Aanbetaling: ONTVANGST maar nog geen OPBRENGST!"
       },
@@ -1850,13 +1864,13 @@ const bedrijven = [
         linkedBedragen: {
           vooruit: { type: 'transaction', txIndex: 1, key: 'vooruit' }
         },
-        correctePosten: ["debiteuren", "eigenVermogen", "crediteuren"],
-        getMutaties: (b) => ({ debiteuren: b.totaal - b.vooruit, eigenVermogen: b.totaal, crediteuren: -b.vooruit }),
+        correctePosten: ["debiteuren", "eigenVermogen", "vooruitontvangen"],
+        getMutaties: (b) => ({ debiteuren: b.totaal - b.vooruit, eigenVermogen: b.totaal, vooruitontvangen: -b.vooruit }),
         resultaat: (b) => ({ opbrengsten: b.totaal }),
         liquiditeit: {},
         hints: [
           "Dienst geleverd: aanbetaling wordt opbrengst, rest wordt debiteur.",
-          "Debiteuren +rest, EV +totaal, Crediteuren -vooruit.",
+          "Debiteuren +rest, EV +totaal, Vooruitontvangen -vooruit.",
           "Drie posten muteren!"
         ],
         kernprincipe: "Bij levering wordt vooruitbetaling omgezet in opbrengst!"
@@ -1909,7 +1923,8 @@ const bedrijven = [
       kas: 0,
       eigenVermogen: 95000,
       lening: 25000,
-      crediteuren: 12000
+      crediteuren: 12000,
+      vooruitontvangen: 0
     },
     transacties: [
       {
@@ -2107,7 +2122,8 @@ const postLabels = {
   kas: "Kas",
   eigenVermogen: "Eigen vermogen",
   lening: "Lening",
-  crediteuren: "Crediteuren"
+  crediteuren: "Crediteuren",
+  vooruitontvangen: "Vooruitontvangen bedragen"
 };
 
 // ============================================================
