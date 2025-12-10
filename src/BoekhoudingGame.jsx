@@ -2257,6 +2257,8 @@ export default function BoekhoudingGame() {
 
   const totaalActiva = balans.vasteActiva + balans.voorraad + balans.debiteuren + balans.bank + balans.kas;
   const totaalPassiva = balans.eigenVermogen + balans.lening + balans.crediteuren;
+  const totaalActivaBegin = openingsBalans.vasteActiva + openingsBalans.voorraad + openingsBalans.debiteuren + openingsBalans.bank + openingsBalans.kas;
+  const totaalPassivaBegin = openingsBalans.eigenVermogen + openingsBalans.lening + openingsBalans.crediteuren;
   const brutowinst = resultaat.opbrengsten - resultaat.kostprijs;
   const nettowinst = brutowinst - resultaat.afschrijving - resultaat.rente - resultaat.overig;
   const eindsaldoLiq = liquiditeit.beginsaldo + liquiditeit.ontvangsten - liquiditeit.uitgaven;
@@ -2418,70 +2420,93 @@ export default function BoekhoudingGame() {
 
           {completeTab === 'Balans' && (
             <div className={cardStyle}>
-              <h2 className="text-pink-500 font-semibold mb-4 text-center">Balans per 31 januari</h2>
-              <div className="grid grid-cols-2 gap-8">
+              <h2 className="text-pink-500 font-semibold mb-4 text-center">Balans januari</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Activa */}
                 <div>
                   <div className="text-gray-400 text-xs mb-3 uppercase font-semibold">Activa</div>
+
+                  {/* Header rij */}
+                  <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 mb-2 pb-1 border-b border-gray-700">
+                    <div className="text-left">Rekening</div>
+                    <div className="text-right">Beginbalans</div>
+                    <div className="text-right">Eindbalans</div>
+                  </div>
+
+                  {/* Account rijen */}
                   <div className="space-y-2">
-                    <div className="flex justify-between py-1">
-                      <span>Vaste activa</span>
-                      <span className="font-mono">€{balans.vasteActiva.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span>Voorraad</span>
-                      <span className="font-mono">€{balans.voorraad.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span>Debiteuren</span>
-                      <span className="font-mono">€{balans.debiteuren.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span>Bank</span>
-                      <span className="font-mono">€{balans.bank.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span>Kas</span>
-                      <span className="font-mono">€{balans.kas.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-t-2 border-pink-500 mt-2 font-semibold">
-                      <span>Totaal activa</span>
-                      <span className="font-mono text-pink-400">€{totaalActiva.toLocaleString()}</span>
+                    {['vasteActiva', 'voorraad', 'debiteuren', 'bank', 'kas'].map(account => (
+                      <div key={account} className="grid grid-cols-3 gap-2 text-sm py-1">
+                        <div className="text-left truncate">{postLabels[account]}</div>
+                        <div className="text-right font-mono text-gray-400">
+                          €{openingsBalans[account].toLocaleString()}
+                        </div>
+                        <div className="text-right font-mono font-semibold">
+                          €{balans[account].toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Totaal rij */}
+                    <div className="grid grid-cols-3 gap-2 pt-2 mt-2 border-t-2 border-pink-500 font-semibold">
+                      <div>Totaal activa</div>
+                      <div className="text-right font-mono text-gray-400">
+                        €{totaalActivaBegin.toLocaleString()}
+                      </div>
+                      <div className="text-right font-mono text-pink-400">
+                        €{totaalActiva.toLocaleString()}
+                      </div>
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Passiva */}
                 <div>
                   <div className="text-gray-400 text-xs mb-3 uppercase font-semibold">Passiva</div>
+
+                  {/* Header rij */}
+                  <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 mb-2 pb-1 border-b border-gray-700">
+                    <div className="text-left">Rekening</div>
+                    <div className="text-right">Beginbalans</div>
+                    <div className="text-right">Eindbalans</div>
+                  </div>
+
+                  {/* Account rijen */}
                   <div className="space-y-2">
-                    <div className="flex justify-between py-1">
-                      <span>Eigen vermogen</span>
-                      <span className="font-mono">€{balans.eigenVermogen.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span>Lening</span>
-                      <span className="font-mono">€{balans.lening.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span>Crediteuren</span>
-                      <span className="font-mono">€{balans.crediteuren.toLocaleString()}</span>
-                    </div>
-                    {/* Spacers om totalen op gelijke hoogte te krijgen */}
+                    {['eigenVermogen', 'lening', 'crediteuren'].map(account => (
+                      <div key={account} className="grid grid-cols-3 gap-2 text-sm py-1">
+                        <div className="text-left truncate">{postLabels[account]}</div>
+                        <div className="text-right font-mono text-gray-400">
+                          €{openingsBalans[account].toLocaleString()}
+                        </div>
+                        <div className="text-right font-mono font-semibold">
+                          €{balans[account].toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Spacers voor alignment */}
                     <div className="py-1 invisible">
                       <span>Spacer</span>
                     </div>
                     <div className="py-1 invisible">
                       <span>Spacer</span>
                     </div>
-                    <div className="flex justify-between py-2 border-t-2 border-pink-500 mt-2 font-semibold">
-                      <span>Totaal passiva</span>
-                      <span className="font-mono text-pink-400">€{totaalPassiva.toLocaleString()}</span>
+
+                    {/* Totaal rij */}
+                    <div className="grid grid-cols-3 gap-2 pt-2 mt-2 border-t-2 border-pink-500 font-semibold">
+                      <div>Totaal passiva</div>
+                      <div className="text-right font-mono text-gray-400">
+                        €{totaalPassivaBegin.toLocaleString()}
+                      </div>
+                      <div className="text-right font-mono text-pink-400">
+                        €{totaalPassiva.toLocaleString()}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-6 p-3 bg-gray-800 rounded text-center">
                 <span className="text-green-400">✓ Balans in evenwicht: Activa = Passiva</span>
               </div>
