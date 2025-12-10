@@ -43,6 +43,9 @@ const bedrijven = [
         getOmschrijving: (b) => `Het bedrijf betaalt de factuur van €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Het geld wordt bijgeschreven op de bankrekening.",
         bedragen: { betaling: 600 },
+        linkedBedragen: {
+          betaling: { type: 'transaction', txIndex: 0, key: 'verkoop' }
+        },
         correctePosten: ["bank", "debiteuren"],
         getMutaties: (b) => ({ bank: b.betaling, debiteuren: -b.betaling }),
         resultaat: {},
@@ -75,6 +78,9 @@ const bedrijven = [
         getOmschrijving: (b) => `Roasted betaalt de groothandel €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Ze maakt het bedrag over via de bank.",
         bedragen: { betaling: 1500 },
+        linkedBedragen: {
+          betaling: { type: 'transaction', txIndex: 2, key: 'inkoop' }
+        },
         correctePosten: ["bank", "crediteuren"],
         getMutaties: (b) => ({ bank: -b.betaling, crediteuren: -b.betaling }),
         resultaat: {},
@@ -174,6 +180,9 @@ const bedrijven = [
         getOmschrijving: (b) => `De horecazaak betaalt de factuur van €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Het geld komt binnen op de bank.",
         bedragen: { betaling: 2400 },
+        linkedBedragen: {
+          betaling: { type: 'transaction', txIndex: 0, key: 'verkoop' }
+        },
         correctePosten: ["bank", "debiteuren"],
         getMutaties: (b) => ({ bank: b.betaling, debiteuren: -b.betaling }),
         resultaat: {},
@@ -206,6 +215,9 @@ const bedrijven = [
         getOmschrijving: (b) => `SuperFresh betaalt de oude schuld van €${b.betaling.toLocaleString()} aan de leverancier.`,
         getDetail: () => "Overboeking via de bank.",
         bedragen: { betaling: 2000 },
+        linkedBedragen: {
+          betaling: { type: 'opening', account: 'crediteuren' }
+        },
         correctePosten: ["bank", "crediteuren"],
         getMutaties: (b) => ({ bank: -b.betaling, crediteuren: -b.betaling }),
         resultaat: {},
@@ -305,6 +317,9 @@ const bedrijven = [
         getOmschrijving: (b) => `Het cateringevent vindt plaats. Totale waarde: €${b.totaal.toLocaleString()}.`,
         getDetail: (b) => `Kostprijs ingrediënten: €${b.kostprijs.toLocaleString()}. De helft (€${b.vooruit.toLocaleString()}) was al vooruitbetaald.`,
         bedragen: { totaal: 3000, kostprijs: 1200, vooruit: 1500 },
+        linkedBedragen: {
+          vooruit: { type: 'transaction', txIndex: 0, key: 'vooruitbetaling' }
+        },
         correctePosten: ["debiteuren", "voorraad", "eigenVermogen", "crediteuren"],
         getMutaties: (b) => ({ debiteuren: b.totaal - b.vooruit, voorraad: -b.kostprijs, eigenVermogen: b.totaal - b.kostprijs, crediteuren: -b.vooruit }),
         resultaat: (b) => ({ opbrengsten: b.totaal, kostprijs: b.kostprijs }),
@@ -321,6 +336,9 @@ const bedrijven = [
         getOmschrijving: (b) => `De klant betaalt het resterende bedrag van €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Overgemaakt naar de bank.",
         bedragen: { betaling: 1500 },
+        linkedBedragen: {
+          betaling: { type: 'transaction', txIndex: 1, key: 'totaal', subtract: 'vooruit' }
+        },
         correctePosten: ["bank", "debiteuren"],
         getMutaties: (b) => ({ bank: b.betaling, debiteuren: -b.betaling }),
         resultaat: {},
@@ -353,6 +371,9 @@ const bedrijven = [
         getOmschrijving: (b) => `Smakelijk betaalt de oude schuld van €${b.betaling.toLocaleString()} aan leveranciers.`,
         getDetail: () => "Via de bank.",
         bedragen: { betaling: 1000 },
+        linkedBedragen: {
+          betaling: { type: 'opening', account: 'crediteuren' }
+        },
         correctePosten: ["bank", "crediteuren"],
         getMutaties: (b) => ({ bank: -b.betaling, crediteuren: -b.betaling }),
         resultaat: {},
@@ -436,6 +457,9 @@ const bedrijven = [
         getOmschrijving: (b) => `Een oude klant betaalt een openstaande factuur van €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Overgemaakt naar de bank.",
         bedragen: { betaling: 3000 },
+        linkedBedragen: {
+          betaling: { type: 'opening', account: 'debiteuren' }
+        },
         correctePosten: ["bank", "debiteuren"],
         getMutaties: (b) => ({ bank: b.betaling, debiteuren: -b.betaling }),
         resultaat: {},
@@ -599,6 +623,9 @@ const bedrijven = [
         getOmschrijving: (b) => `WebShop24 betaalt de oude leveranciersschuld van €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Overboeking via de bank.",
         bedragen: { betaling: 3000 },
+        linkedBedragen: {
+          betaling: { type: 'opening', account: 'crediteuren' }
+        },
         correctePosten: ["bank", "crediteuren"],
         getMutaties: (b) => ({ bank: -b.betaling, crediteuren: -b.betaling }),
         resultaat: {},
@@ -1123,6 +1150,9 @@ const bedrijven = [
         getOmschrijving: (b) => `TransLog betaalt de brandstofrekening van €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Tankpas afrekening.",
         bedragen: { betaling: 4500 },
+        linkedBedragen: {
+          betaling: { type: 'transaction', txIndex: 1, key: 'brandstof' }
+        },
         correctePosten: ["bank", "crediteuren"],
         getMutaties: (b) => ({ bank: -b.betaling, crediteuren: -b.betaling }),
         resultaat: {},
@@ -1254,6 +1284,9 @@ const bedrijven = [
         getOmschrijving: (b) => `FlexForce betaalt €${b.recruitment.toLocaleString()} aan het recruitmentbureau.`,
         getDetail: () => "Oude schuld voor het vinden van medewerkers.",
         bedragen: { recruitment: 3000 },
+        linkedBedragen: {
+          recruitment: { type: 'opening', account: 'crediteuren' }
+        },
         correctePosten: ["bank", "crediteuren"],
         getMutaties: (b) => ({ bank: -b.recruitment, crediteuren: -b.recruitment }),
         resultaat: {},
@@ -1369,6 +1402,9 @@ const bedrijven = [
         getOmschrijving: (b) => `Een oude klant betaalt een factuur van €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Op de bank.",
         bedragen: { betaling: 10000 },
+        linkedBedragen: {
+          betaling: { type: 'opening', account: 'debiteuren' }
+        },
         correctePosten: ["bank", "debiteuren"],
         getMutaties: (b) => ({ bank: b.betaling, debiteuren: -b.betaling }),
         resultaat: {},
@@ -1385,6 +1421,9 @@ const bedrijven = [
         getOmschrijving: (b) => `Het kick-off event vindt plaats. Totale waarde: €${b.totaal.toLocaleString()}.`,
         getDetail: (b) => `Materiaalkosten: €${b.materiaal.toLocaleString()}. Vooruitbetaald was €${b.vooruit.toLocaleString()}.`,
         bedragen: { totaal: 15000, vooruit: 6000, materiaal: 2000 },
+        linkedBedragen: {
+          vooruit: { type: 'transaction', txIndex: 0, key: 'vooruit' }
+        },
         correctePosten: ["debiteuren", "voorraad", "eigenVermogen", "crediteuren"],
         getMutaties: (b) => ({ debiteuren: b.totaal - b.vooruit, voorraad: -b.materiaal, eigenVermogen: b.totaal - b.materiaal, crediteuren: -b.vooruit }),
         resultaat: (b) => ({ opbrengsten: b.totaal, kostprijs: b.materiaal }),
@@ -1401,6 +1440,9 @@ const bedrijven = [
         getOmschrijving: (b) => `EventStars betaalt de verhuurder €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Via de bank.",
         bedragen: { betaling: 3500 },
+        linkedBedragen: {
+          betaling: { type: 'transaction', txIndex: 1, key: 'huur' }
+        },
         correctePosten: ["bank", "crediteuren"],
         getMutaties: (b) => ({ bank: -b.betaling, crediteuren: -b.betaling }),
         resultaat: {},
@@ -1516,6 +1558,9 @@ const bedrijven = [
         getOmschrijving: (b) => `PhoneFixxx betaalt de oude leveranciersschuld van €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Via de bank.",
         bedragen: { betaling: 2000 },
+        linkedBedragen: {
+          betaling: { type: 'opening', account: 'crediteuren' }
+        },
         correctePosten: ["bank", "crediteuren"],
         getMutaties: (b) => ({ bank: -b.betaling, crediteuren: -b.betaling }),
         resultaat: {},
@@ -1615,6 +1660,9 @@ const bedrijven = [
         getOmschrijving: (b) => `TechMachines ontvangt betaling van €${b.betaling.toLocaleString()} voor een oude levering.`,
         getDetail: () => "Op de bank.",
         bedragen: { betaling: 40000 },
+        linkedBedragen: {
+          betaling: { type: 'opening', account: 'debiteuren' }
+        },
         correctePosten: ["bank", "debiteuren"],
         getMutaties: (b) => ({ bank: b.betaling, debiteuren: -b.betaling }),
         resultaat: {},
@@ -1647,6 +1695,9 @@ const bedrijven = [
         getOmschrijving: (b) => `TechMachines betaalt de oude leveranciersschulden: €${b.betaling.toLocaleString()}.`,
         getDetail: () => "Via de bank.",
         bedragen: { betaling: 5000 },
+        linkedBedragen: {
+          betaling: { type: 'opening', account: 'crediteuren' }
+        },
         correctePosten: ["bank", "crediteuren"],
         getMutaties: (b) => ({ bank: -b.betaling, crediteuren: -b.betaling }),
         resultaat: {},
@@ -1794,6 +1845,9 @@ const bedrijven = [
         getOmschrijving: (b) => `De conferentie vindt plaats. Totale waarde: €${b.totaal.toLocaleString()}.`,
         getDetail: (b) => `Vooruitbetaald was €${b.vooruit.toLocaleString()}. Rest wordt gefactureerd.`,
         bedragen: { totaal: 9000, vooruit: 4500 },
+        linkedBedragen: {
+          vooruit: { type: 'transaction', txIndex: 1, key: 'vooruit' }
+        },
         correctePosten: ["debiteuren", "eigenVermogen", "crediteuren"],
         getMutaties: (b) => ({ debiteuren: b.totaal - b.vooruit, eigenVermogen: b.totaal, crediteuren: -b.vooruit }),
         resultaat: (b) => ({ opbrengsten: b.totaal }),
@@ -1975,6 +2029,49 @@ const bedrijven = [
 // HELPER FUNCTIES
 // ============================================================
 
+const randomizeTransacties = (transactions, openingsBalans) => {
+  const randomized = [];
+
+  for (let i = 0; i < transactions.length; i++) {
+    const tx = transactions[i];
+    const bedragen = {};
+
+    // Randomiseer onafhankelijke bedragen
+    Object.keys(tx.bedragen).forEach(key => {
+      if (!tx.linkedBedragen || !tx.linkedBedragen[key]) {
+        const base = tx.bedragen[key];
+        const variation = 0.15;
+        const multiplier = 1 + (Math.random() * 2 - 1) * variation;
+        bedragen[key] = Math.round(base * multiplier / 10) * 10;
+      }
+    });
+
+    // Kopieer gekoppelde bedragen
+    if (tx.linkedBedragen) {
+      Object.keys(tx.linkedBedragen).forEach(key => {
+        const link = tx.linkedBedragen[key];
+
+        if (link.type === 'transaction') {
+          // Kopieer van eerdere transactie
+          bedragen[key] = randomized[link.txIndex].bedragen[link.key];
+
+          // Als er een subtract is, trek dat ook af
+          if (link.subtract) {
+            bedragen[key] -= randomized[link.txIndex].bedragen[link.subtract];
+          }
+        } else if (link.type === 'opening') {
+          // Kopieer van opening balance
+          bedragen[key] = openingsBalans[link.account];
+        }
+      });
+    }
+
+    randomized.push({ ...tx, bedragen });
+  }
+
+  return randomized;
+};
+
 const randomizeBedragen = (bedragen) => {
   const result = {};
   Object.keys(bedragen).forEach(key => {
@@ -2019,10 +2116,7 @@ export default function BoekhoudingGame() {
   const gameData = useMemo(() => {
     const bedrijf = bedrijven[Math.floor(Math.random() * bedrijven.length)];
     const openingsBalans = randomizeBalans(bedrijf.openingsBalans);
-    const transacties = bedrijf.transacties.map(tx => ({
-      ...tx,
-      bedragen: randomizeBedragen(tx.bedragen)
-    }));
+    const transacties = randomizeTransacties(bedrijf.transacties, openingsBalans);
     return { bedrijf, openingsBalans, transacties };
   }, []);
 
