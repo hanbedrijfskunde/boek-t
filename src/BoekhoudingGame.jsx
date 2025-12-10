@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from 'react';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 // ============================================================
 // BEDRIJVEN DATABASE - Met dynamische bedragen in tekst
@@ -2109,6 +2111,157 @@ const postLabels = {
 };
 
 // ============================================================
+// PDF GENERATIE FUNCTIE
+// ============================================================
+
+const generatePDF = (bedrijf, openingsBalans, transacties, hintHistory) => {
+  const doc = new jsPDF();
+
+  // Titel pagina
+  doc.setFontSize(20);
+  doc.text(`Boekhoudoefening: ${bedrijf.naam}`, 105, 20, { align: 'center' });
+
+  doc.setFontSize(12);
+  doc.text(bedrijf.beschrijving, 105, 30, { align: 'center' });
+  doc.text('Boek alle transacties correct en bereken de eindbalans', 105, 37, { align: 'center' });
+
+  // Beginbalans
+  doc.setFontSize(14);
+  doc.text('Beginbalans januari', 20, 50);
+
+  const balansData = [
+    ['ACTIVA', '', 'PASSIVA', ''],
+    ['Vaste activa', `€${openingsBalans.vasteActiva.toLocaleString()}`, 'Eigen vermogen', `€${openingsBalans.eigenVermogen.toLocaleString()}`],
+    ['Voorraad', `€${openingsBalans.voorraad.toLocaleString()}`, 'Lening', `€${openingsBalans.lening.toLocaleString()}`],
+    ['Debiteuren', `€${openingsBalans.debiteuren.toLocaleString()}`, 'Crediteuren', `€${openingsBalans.crediteuren.toLocaleString()}`],
+    ['Bank', `€${openingsBalans.bank.toLocaleString()}`, '', ''],
+    ['Kas', `€${openingsBalans.kas.toLocaleString()}`, '', ''],
+    ['', '', '', ''],
+    ['Totaal activa', `€${(openingsBalans.vasteActiva + openingsBalans.voorraad + openingsBalans.debiteuren + openingsBalans.bank + openingsBalans.kas).toLocaleString()}`,
+     'Totaal passiva', `€${(openingsBalans.eigenVermogen + openingsBalans.lening + openingsBalans.crediteuren).toLocaleString()}`]
+  ];
+
+  doc.autoTable({
+    startY: 55,
+    head: [],
+    body: balansData,
+    theme: 'grid',
+    styles: { fontSize: 10 },
+    columnStyles: {
+      0: { cellWidth: 45, fontStyle: 'bold' },
+      1: { cellWidth: 40, halign: 'right' },
+      2: { cellWidth: 45, fontStyle: 'bold' },
+      3: { cellWidth: 40, halign: 'right' }
+    }
+  });
+
+  // Transacties
+  doc.setFontSize(14);
+  const yPos = doc.lastAutoTable.finalY + 15;
+  doc.text('Transacties', 20, yPos);
+
+  let currentY = yPos + 10;
+  transacties.forEach((tx, i) => {
+    const b = tx.bedragen;
+    const omschrijving = tx.getOmschrijving(b);
+    const detail = tx.getDetail ? tx.getDetail(b) : '';
+
+    // Check of we een nieuwe pagina nodig hebben
+    if (currentY > 250) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.text(`${i + 1}. ${tx.datum}`, 20, currentY);
+
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(10);
+
+    // Omschrijving (met text wrapping)
+    const splitOmschrijving = doc.splitTextToSize(omschrijving, 170);
+    doc.text(splitOmschrijving, 20, currentY + 6);
+    currentY += 6 + (splitOmschrijving.length * 5);
+
+    if (detail) {
+      doc.setTextColor(100);
+      const splitDetail = doc.splitTextToSize(detail, 170);
+      doc.text(splitDetail, 20, currentY);
+      currentY += splitDetail.length * 5;
+      doc.setTextColor(0);
+    }
+
+    currentY += 8;
+  });
+
+  // Nieuwe pagina voor uitwerking
+  doc.addPage();
+  doc.setFontSize(16);
+  doc.text('Uitwerking', 105, 20, { align: 'center' });
+
+  currentY = 35;
+
+  transacties.forEach((tx, i) => {
+    const b = tx.bedragen;
+    const omschrijving = tx.getOmschrijving(b);
+    const mutaties = tx.getMutaties(b);
+
+    // Check nieuwe pagina
+    if (currentY > 240) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.text(`${i + 1}. ${tx.datum}`, 20, currentY);
+
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(9);
+    const splitOmschrijving = doc.splitTextToSize(omschrijving, 170);
+    doc.text(splitOmschrijving, 20, currentY + 5);
+    currentY += 5 + (splitOmschrijving.length * 4);
+
+    // Mutaties tabel
+    const mutatiesData = Object.entries(mutaties).map(([post, bedrag]) => {
+      const label = postLabels[post];
+      const sign = bedrag >= 0 ? '+' : '';
+      return [label, `${sign}€${Math.abs(bedrag).toLocaleString()}`];
+    });
+
+    doc.autoTable({
+      startY: currentY,
+      head: [['Rekening', 'Mutatie']],
+      body: mutatiesData,
+      theme: 'striped',
+      styles: { fontSize: 9 },
+      columnStyles: {
+        0: { cellWidth: 60 },
+        1: { cellWidth: 40, halign: 'right' }
+      },
+      margin: { left: 25 }
+    });
+
+    currentY = doc.lastAutoTable.finalY + 3;
+
+    // Uitleg (kernprincipe)
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'italic');
+    doc.setTextColor(50);
+    const splitPrincipe = doc.splitTextToSize(`💡 ${tx.kernprincipe}`, 165);
+    doc.text(splitPrincipe, 25, currentY);
+    currentY += splitPrincipe.length * 4 + 8;
+    doc.setTextColor(0);
+    doc.setFont(undefined, 'normal');
+  });
+
+  // Save PDF
+  const datum = new Date().toISOString().split('T')[0];
+  doc.save(`Boekhoudoefening-${bedrijf.naam.replace(/\s+/g, '-')}-${datum}.pdf`);
+};
+
+// ============================================================
 // MAIN COMPONENT
 // ============================================================
 
@@ -2705,8 +2858,14 @@ export default function BoekhoudingGame() {
             </div>
           )}
 
-          {/* Button */}
-          <div className="text-center mt-6">
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row justify-center gap-3 mt-6">
+            <button
+              onClick={() => generatePDF(bedrijf, openingsBalans, transacties, hintHistory)}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              📄 Download als PDF
+            </button>
             <button onClick={resetGame} className={buttonPrimary}>
               Nieuw bedrijf 🎲
             </button>
