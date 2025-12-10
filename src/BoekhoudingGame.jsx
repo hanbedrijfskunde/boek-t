@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // ============================================================
 // BEDRIJVEN DATABASE - Met dynamische bedragen in tekst
@@ -2157,7 +2157,7 @@ const generatePDF = (bedrijf, openingsBalans, transacties) => {
      'Totaal passiva', `€${(openingsBalans.eigenVermogen + openingsBalans.lening + openingsBalans.crediteuren + openingsBalans.vooruitontvangen).toLocaleString()}`]
   ];
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: 55,
     head: [],
     body: balansData,
@@ -2246,7 +2246,7 @@ const generatePDF = (bedrijf, openingsBalans, transacties) => {
       return [label, `${sign}€${Math.abs(bedrag).toLocaleString()}`];
     });
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: currentY,
       head: [['Rekening', 'Mutatie']],
       body: mutatiesData,
