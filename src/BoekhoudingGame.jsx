@@ -2114,7 +2114,7 @@ const postLabels = {
 // PDF GENERATIE FUNCTIE
 // ============================================================
 
-const generatePDF = (bedrijf, openingsBalans, transacties, hintHistory) => {
+const generatePDF = (bedrijf, openingsBalans, transacties) => {
   const doc = new jsPDF();
 
   // Titel pagina
@@ -2861,7 +2861,7 @@ export default function BoekhoudingGame() {
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 mt-6">
             <button
-              onClick={() => generatePDF(bedrijf, openingsBalans, transacties, hintHistory)}
+              onClick={() => generatePDF(bedrijf, openingsBalans, transacties)}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
               📄 Download als PDF
