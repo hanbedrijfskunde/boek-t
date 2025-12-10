@@ -2109,7 +2109,7 @@ const randomizeBalans = (balans) => {
     result[key] = Math.round(base * multiplier / 100) * 100;
   });
   const totaalActiva = result.vasteActiva + result.voorraad + result.debiteuren + result.bank + result.kas;
-  const totaalPassivaZonderEV = result.lening + result.crediteuren;
+  const totaalPassivaZonderEV = result.lening + result.crediteuren + result.vooruitontvangen;
   result.eigenVermogen = totaalActiva - totaalPassivaZonderEV;
   return result;
 };
@@ -2150,11 +2150,11 @@ const generatePDF = (bedrijf, openingsBalans, transacties) => {
     ['Vaste activa', `€${openingsBalans.vasteActiva.toLocaleString()}`, 'Eigen vermogen', `€${openingsBalans.eigenVermogen.toLocaleString()}`],
     ['Voorraad', `€${openingsBalans.voorraad.toLocaleString()}`, 'Lening', `€${openingsBalans.lening.toLocaleString()}`],
     ['Debiteuren', `€${openingsBalans.debiteuren.toLocaleString()}`, 'Crediteuren', `€${openingsBalans.crediteuren.toLocaleString()}`],
-    ['Bank', `€${openingsBalans.bank.toLocaleString()}`, '', ''],
+    ['Bank', `€${openingsBalans.bank.toLocaleString()}`, 'Vooruitontvangen', `€${openingsBalans.vooruitontvangen.toLocaleString()}`],
     ['Kas', `€${openingsBalans.kas.toLocaleString()}`, '', ''],
     ['', '', '', ''],
     ['Totaal activa', `€${(openingsBalans.vasteActiva + openingsBalans.voorraad + openingsBalans.debiteuren + openingsBalans.bank + openingsBalans.kas).toLocaleString()}`,
-     'Totaal passiva', `€${(openingsBalans.eigenVermogen + openingsBalans.lening + openingsBalans.crediteuren).toLocaleString()}`]
+     'Totaal passiva', `€${(openingsBalans.eigenVermogen + openingsBalans.lening + openingsBalans.crediteuren + openingsBalans.vooruitontvangen).toLocaleString()}`]
   ];
 
   doc.autoTable({
@@ -2519,9 +2519,9 @@ export default function BoekhoudingGame() {
   };
 
   const totaalActiva = balans.vasteActiva + balans.voorraad + balans.debiteuren + balans.bank + balans.kas;
-  const totaalPassiva = balans.eigenVermogen + balans.lening + balans.crediteuren;
+  const totaalPassiva = balans.eigenVermogen + balans.lening + balans.crediteuren + balans.vooruitontvangen;
   const totaalActivaBegin = openingsBalans.vasteActiva + openingsBalans.voorraad + openingsBalans.debiteuren + openingsBalans.bank + openingsBalans.kas;
-  const totaalPassivaBegin = openingsBalans.eigenVermogen + openingsBalans.lening + openingsBalans.crediteuren;
+  const totaalPassivaBegin = openingsBalans.eigenVermogen + openingsBalans.lening + openingsBalans.crediteuren + openingsBalans.vooruitontvangen;
   const brutowinst = resultaat.opbrengsten - resultaat.kostprijs;
   const nettowinst = brutowinst - resultaat.afschrijving - resultaat.rente - resultaat.overig;
   const eindsaldoLiq = liquiditeit.beginsaldo + liquiditeit.ontvangsten - liquiditeit.uitgaven;
@@ -2577,11 +2577,11 @@ export default function BoekhoudingGame() {
                   <div className="flex justify-between"><span>Eigen vermogen</span><span>€{openingsBalans.eigenVermogen.toLocaleString()}</span></div>
                   <div className="flex justify-between"><span>Lening</span><span>€{openingsBalans.lening.toLocaleString()}</span></div>
                   <div className="flex justify-between"><span>Crediteuren</span><span>€{openingsBalans.crediteuren.toLocaleString()}</span></div>
-                  <div className="invisible"><span>Spacer</span></div>
+                  <div className="flex justify-between"><span>Vooruitontvangen bedragen</span><span>€{openingsBalans.vooruitontvangen.toLocaleString()}</span></div>
                   <div className="invisible"><span>Spacer</span></div>
                   <div className="flex justify-between border-t border-pink-500 pt-1 mt-1 font-semibold">
                     <span>Totaal</span>
-                    <span className="text-pink-400">€{(openingsBalans.eigenVermogen + openingsBalans.lening + openingsBalans.crediteuren).toLocaleString()}</span>
+                    <span className="text-pink-400">€{(openingsBalans.eigenVermogen + openingsBalans.lening + openingsBalans.crediteuren + openingsBalans.vooruitontvangen).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -2736,7 +2736,7 @@ export default function BoekhoudingGame() {
 
                   {/* Account rijen */}
                   <div className="space-y-2">
-                    {['eigenVermogen', 'lening', 'crediteuren'].map(account => (
+                    {['eigenVermogen', 'lening', 'crediteuren', 'vooruitontvangen'].map(account => (
                       <div key={account} className="grid grid-cols-3 gap-2 text-sm py-1">
                         <div className="text-left truncate">{postLabels[account]}</div>
                         <div className="text-right font-mono text-gray-400">
@@ -2748,10 +2748,7 @@ export default function BoekhoudingGame() {
                       </div>
                     ))}
 
-                    {/* Spacers voor alignment */}
-                    <div className="py-1 invisible">
-                      <span>Spacer</span>
-                    </div>
+                    {/* Spacer voor alignment */}
                     <div className="py-1 invisible">
                       <span>Spacer</span>
                     </div>
@@ -3031,7 +3028,7 @@ export default function BoekhoudingGame() {
             <div className="flex flex-col">
               <div className="text-gray-400 text-xs mb-2 uppercase">Passiva</div>
               <div className="flex-1 flex flex-col">
-                {['eigenVermogen', 'lening', 'crediteuren'].map(post => (
+                {['eigenVermogen', 'lening', 'crediteuren', 'vooruitontvangen'].map(post => (
                   <div
                     key={post}
                     onClick={() => togglePost(post)}
